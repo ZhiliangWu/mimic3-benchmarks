@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser()
 common_utils.add_common_arguments(parser)
 parser.add_argument('--deep_supervision', dest='deep_supervision', action='store_true')
 parser.set_defaults(deep_supervision=False)
-parser.add_argument('--partition', type=str, default='custom',
+parser.add_argument('--partition', type=str, default='none',
                     help="log, custom, none")
 parser.add_argument('--data', type=str, help='Path to the data of length-of-stay task',
                     default=os.path.join(os.path.dirname(__file__), '../../data/length-of-stay/'))
@@ -120,8 +120,8 @@ if args.deep_supervision:
                                                  discretizer, normalizer, args.batch_size, shuffle=False)
 else:
     # Set number of batches in one epoch
-    train_nbatches = 2000
-    val_nbatches = 1000
+    train_nbatches = 20
+    val_nbatches = 10
     if args.small_part:
         train_nbatches = 20
         val_nbatches = 20
@@ -160,6 +160,8 @@ if args.mode == 'train':
         os.makedirs(keras_logs)
     csv_logger = CSVLogger(os.path.join(keras_logs, model.final_name + '.csv'),
                            append=True, separator=';')
+
+    print(next(train_data_gen))
 
     print("==> training")
     model.fit_generator(generator=train_data_gen,

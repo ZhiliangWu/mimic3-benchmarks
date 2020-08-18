@@ -31,11 +31,14 @@ def extract_features_from_rawdata(chunk, header, period, features):
 def read_chunk(reader, chunk_size):
     data = {}
     for i in range(chunk_size):
-        ret = reader.read_next()
-        for k, v in ret.items():
-            if k not in data:
-                data[k] = []
-            data[k].append(v)
+        try:
+            ret = reader.read_next()
+            for k, v in ret.items():
+                if k not in data:
+                    data[k] = []
+                data[k].append(v)
+        except ValueError:
+            break
     data["header"] = data["header"][0]
     return data
 
@@ -72,8 +75,9 @@ def sort_and_shuffle(data, batch_size):
 def add_common_arguments(parser):
     """ Add all the parameters which are common across the tasks
     """
-    parser.add_argument('--network', type=str, required=True)
-    parser.add_argument('--dim', type=int, default=256,
+    parser.add_argument('--network', type=str, required=False,
+                        default=os.path.join(os.path.dirname(__file__), '../keras_models/lstm.py'))
+    parser.add_argument('--dim', type=int, default=64,
                         help='number of hidden units')
     parser.add_argument('--depth', type=int, default=1,
                         help='number of bi-LSTMs')

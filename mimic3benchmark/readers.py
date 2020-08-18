@@ -32,9 +32,10 @@ class Reader(object):
 
     def read_next(self):
         to_read_index = self._current_index
-        self._current_index += 1
         if self._current_index == self.get_number_of_examples():
-            self._current_index = 0
+            raise ValueError
+            # self._current_index = 0
+        self._current_index += 1
         return self.read_example(to_read_index)
 
 
